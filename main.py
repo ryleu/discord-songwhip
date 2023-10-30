@@ -5,6 +5,7 @@ import requests
 import os
 import interactions
 import re
+import typing
 
 if os.path.exists("config.json"):
     with open("config.json") as file:
@@ -23,8 +24,10 @@ url_regex = re.compile(
 
 def get_song_data(url: str) -> interactions.Embed:
     # get the data from the songwhip api
-    response = requests.post(url="https://songwhip.com", data=json.dumps({"url": url}))
-    data = response.json()
+    response: requests.Response = requests.post(
+        url="https://songwhip.com", data=json.dumps({"url": url})
+    )
+    data: dict = response.json()
 
     # check and make sure we have a valid response
     data["status"] = data.get("status", "ok")
@@ -57,7 +60,7 @@ def get_song_data(url: str) -> interactions.Embed:
     )
 
 
-def author_branding():
+def author_branding() -> typing.Optional[interactions.EmbedAuthor]:
     if config["disable_branding"]:
         return None
     return interactions.EmbedAuthor(
@@ -71,7 +74,7 @@ bot = interactions.Client()
 
 
 @interactions.listen()
-async def on_startup():
+async def on_startup() -> None:
     print("Bot is ready!")
 
 
@@ -87,7 +90,7 @@ async def on_startup():
         ),
     ],
 )
-async def music(ctx, url: str):
+async def music(ctx, url: str) -> None:
     await ctx.defer()
 
     embed = get_song_data(url)
