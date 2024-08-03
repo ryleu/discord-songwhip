@@ -10,8 +10,7 @@ With `config.json`:
 
 ```json
 {
-    "bot_token": "put your bot token here",
-    "disable_branding": "false"
+    "bot_token": "put your bot token here"
 }
 ```
 
@@ -23,7 +22,6 @@ With environment variables, pass in the following:
 
 ```toml
 BOT_TOKEN="bot token here"
-DISABLE_BRANDING="false"
 ```
 
 ## running without docker

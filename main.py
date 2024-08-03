@@ -14,7 +14,6 @@ if os.path.exists("config.json"):
 else:
     config = {
         "bot_token": os.environ["BOT_TOKEN"],
-        "disable_branding": os.environ["DISABLE_BRANDING"],
     }
 
 url_regex = re.compile(
