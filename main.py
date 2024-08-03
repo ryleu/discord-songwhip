@@ -69,7 +69,7 @@ def get_song_data(url: str) -> interactions.Embed:
     return interactions.Embed(
         title=f"{title} by {artist}",
         description="listen on:\n" + "\n".join([
-            f"- [{x["platform"]}]({x["url"]})" for x in relevant_data
+            f"- [{x['platform']}]({x['url']})" for x in relevant_data
         ]),
         color=0x00FFFF,
         url=data["pageUrl"],
@@ -110,7 +110,7 @@ async def music(ctx, url: str) -> None:
     embed = get_song_data(url)
     embed.author = author_branding()
 
-    await ctx.respond(content=f"<{url}>", embed=embed)
+    await ctx.respond(embed=embed)
 
 
 @interactions.message_context_menu(name="Get Songs")
