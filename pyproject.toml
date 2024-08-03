@@ -9,12 +9,12 @@ packages = [{include = "discord_songwhip"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-discord-py-interactions = "^5.10.0"
-requests = "^2.31.0"
+discord-py-interactions = "^5.13.1"
+requests = "^2.32.3"
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.10.1"
-pylance = "^0.8.8"
+black = "^23.12.1"
+pylance = "^0.8.21"
 
 [build-system]
 requires = ["poetry-core"]
