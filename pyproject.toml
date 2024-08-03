@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "discord-songwhip"
-version = "0.1.0"
+version = "0.2.0"
 description = "discord bot to implement songwhip's api in-app"
 authors = ["ryleu <69326171+ryleu@users.noreply.github.com>"]
 license = "AGPL-v3.0-or-greater"
@@ -13,7 +13,7 @@ discord-py-interactions = "^5.13.1"
 requests = "^2.32.3"
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.12.1"
+black = "^24.3.0"
 pylance = "^0.8.21"
 
 [build-system]
