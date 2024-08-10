@@ -1,6 +1,6 @@
 {
-    "name": "Discord Songwhip",
-    "description": "discord bot to implement songwhip's api in-app",
+    "name": "Discord Odesli",
+    "description": "discord bot to implement Odesli's api in-app",
     "repository": "https://github.com/ryleu/discord-songwhip",
     "keywords": [
         "music",

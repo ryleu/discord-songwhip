@@ -26,7 +26,7 @@ BOT_TOKEN="bot token here"
 
 ## running without docker
 
-Install poetry 1.3.x from your package manager, then install the dependencies and run the bot:
+Install poetry 1.8.x, then install the dependencies and run the bot:
 
 ```sh
 poetry install

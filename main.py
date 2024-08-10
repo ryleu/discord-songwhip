@@ -1,19 +1,21 @@
 #!/bin/env -S poetry run python
 
-import json
-import requests
-import os
 import interactions
 import re
-import typing
+import os
+
+from typing import Union, Optional
+from json import loads
+from requests import get
+from io import StringIO
 from urllib.parse import quote
 
 if os.path.exists("config.json"):
     with open("config.json") as file:
-        config = json.loads(file.read())
+        config = loads(file.read())
 else:
     config = {
-        "bot_token": os.environ["BOT_TOKEN"],
+        "bot_token": os.environ["BOT_TOKEN"]
     }
 
 url_regex = re.compile(
@@ -22,20 +24,17 @@ url_regex = re.compile(
 )
 
 
-def get_song_data(url: str) -> interactions.Embed:
+def get_song_data(url: str) -> Union[interactions.Embed, interactions.File]:
     # get the data from the songwhip api
-    response: requests.Response = requests.get(
+    response = get(
         url= f"https://api.song.link/v1-alpha.1/links?url={quote(url)}&userCountry=US"
     )
     data: dict = response.json()
 
     # check and make sure we have a valid response
-    if response.status_code not in range(200, 300):
-        return interactions.Embed(
-            title="Error",
-            description=data,
-            color=0xFF0000,
-        )
+    code = response.status_code
+    if code not in range(200, 300):
+        return interactions.File(file = StringIO(data), file_name = f"{code}.log")
 
     # parse the data we care about
     title = None
@@ -64,10 +63,17 @@ def get_song_data(url: str) -> interactions.Embed:
             "platform": platform,
             "url": url,
         })
+    
+    # discord caps embed titles at 256 characters
+    artist_text = f" by {artist}"
+    remaining_length = 256 - len(artist_text)
+    if len(title) > remaining_length:
+        title_section = title[:remaining_length - 2] + "…" + artist_text
+    else:
+        title_section = title + artist_text
 
-    # return the embed
     return interactions.Embed(
-        title=f"{title} by {artist}",
+        title=title_section[:255],
         description="listen on:\n" + "\n".join([
             f"- [{x['platform']}]({x['url']})" for x in relevant_data
         ]),
@@ -77,7 +83,8 @@ def get_song_data(url: str) -> interactions.Embed:
     )
 
 
-def author_branding() -> interactions.EmbedAuthor:
+def attribution() -> interactions.EmbedAuthor:
+    # required to use odesli per their terms
     return interactions.EmbedAuthor(
         name="Powered by Odesli.",
         url="https://odesli.co/",
@@ -108,23 +115,23 @@ async def music(ctx, url: str) -> None:
     await ctx.defer()
 
     embed = get_song_data(url)
-    embed.author = author_branding()
+    embed.author = attribution()
 
     await ctx.respond(embed=embed)
 
 
 @interactions.message_context_menu(name="Get Songs")
-async def get_song_data_from_message(ctx: interactions.ContextMenuContext):
+async def get_song_data_from_message(ctx: interactions.ContextMenuContext) -> None:
     await ctx.defer(ephemeral=True)
 
     embeds = []
 
-    for match in url_regex.finditer(ctx.target.content):  # type: ignore
+    for match in url_regex.finditer(ctx.target.content):
         url = match.expand(r"\g<scheme>://\g<domain>\g<directory>")
 
         # get the song data
         embed = get_song_data(url)
-        embed.author = author_branding()
+        embed.author = attribution()
 
         embeds.append(embed)
 
