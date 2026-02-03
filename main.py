@@ -122,7 +122,7 @@ async def music(ctx, url: str) -> None:
 
 @interactions.message_context_menu(name="Get Songs")
 async def get_song_data_from_message(ctx: interactions.ContextMenuContext) -> None:
-    await ctx.defer(ephemeral=True)
+    await ctx.defer(ephemeral=False)
 
     embeds = []
 
@@ -135,7 +135,7 @@ async def get_song_data_from_message(ctx: interactions.ContextMenuContext) -> No
 
         embeds.append(embed)
 
-    await ctx.respond(content="Found these song(s):", embeds=embeds, ephemeral=True)
+    await ctx.respond(content="Found these song(s):", embeds=embeds, ephemeral=False)
 
 if __name__ == "__main__":
     # run the bot
