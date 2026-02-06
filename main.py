@@ -113,6 +113,7 @@ async def on_startup() -> None:
         ),
     ],
 )
+@interactions.integration_types(guild=True, user=True)
 @interactions.contexts(guild=True, bot_dm=False, private_channel=True)
 async def music(ctx, url: str) -> None:
     await ctx.defer()
