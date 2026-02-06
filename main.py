@@ -44,6 +44,7 @@ def get_song_data(url: str) -> Union[interactions.Embed, interactions.File]:
         "youtubeMusic",
         "appleMusic",
         "amazonMusic",
+        "bandcamp",
     ]
     relevant_data = []
     for platform in relevant_platforms:
