@@ -101,7 +101,6 @@ async def on_startup() -> None:
     print("Bot is ready!")
 
 
-@interactions.contexts(guild=True, bot_dm=False, private_channel=True)
 @interactions.slash_command(
     name="music",
     description="Generate a Songwhip link from a link.",
@@ -114,6 +113,7 @@ async def on_startup() -> None:
         ),
     ],
 )
+@interactions.contexts(guild=True, bot_dm=False, private_channel=True)
 async def music(ctx, url: str) -> None:
     await ctx.defer()
 
