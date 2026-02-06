@@ -4,7 +4,7 @@ import interactions
 import re
 import os
 
-from typing import Union, Optional
+from typing import Union
 from json import loads
 from requests import get
 from io import StringIO
@@ -14,9 +14,7 @@ if os.path.exists("config.json"):
     with open("config.json") as file:
         config = loads(file.read())
 else:
-    config = {
-        "bot_token": os.environ["BOT_TOKEN"]
-    }
+    config = {"bot_token": os.environ["BOT_TOKEN"]}
 
 url_regex = re.compile(
     r"(?P<scheme>https?):\/\/(?P<domain>[\w_-]+(?:(?:\.[\w_-]+)+))(?P<directory>[\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])",
@@ -27,14 +25,14 @@ url_regex = re.compile(
 def get_song_data(url: str) -> Union[interactions.Embed, interactions.File]:
     # get the data from the songwhip api
     response = get(
-        url= f"https://api.song.link/v1-alpha.1/links?url={quote(url)}&userCountry=US"
+        url=f"https://api.song.link/v1-alpha.1/links?url={quote(url)}&userCountry=US"
     )
     data: dict = response.json()
 
     # check and make sure we have a valid response
     code = response.status_code
     if code not in range(200, 300):
-        return interactions.File(file = StringIO(data), file_name = f"{code}.log")
+        return interactions.File(file=StringIO(data), file_name=f"{code}.log")
 
     # parse the data we care about
     title = None
@@ -55,28 +53,32 @@ def get_song_data(url: str) -> Union[interactions.Embed, interactions.File]:
         url = by_platform["url"]
         id = by_platform["entityUniqueId"]
         entity = data["entitiesByUniqueId"][id]
-        if title == None: title = entity.get("title", None)
-        if artist == None: artist = entity.get("artistName", None)
-        if thumbnail == None: thumbnail = entity.get("thumbnailUrl", None)
+        if title == None:
+            title = entity.get("title", None)
+        if artist == None:
+            artist = entity.get("artistName", None)
+        if thumbnail == None:
+            thumbnail = entity.get("thumbnailUrl", None)
 
-        relevant_data.append({
-            "platform": platform,
-            "url": url,
-        })
-    
+        relevant_data.append(
+            {
+                "platform": platform,
+                "url": url,
+            }
+        )
+
     # discord caps embed titles at 256 characters
     artist_text = f" by {artist}"
     remaining_length = 256 - len(artist_text)
     if len(title) > remaining_length:
-        title_section = title[:remaining_length - 2] + "…" + artist_text
+        title_section = title[: remaining_length - 2] + "…" + artist_text
     else:
         title_section = title + artist_text
 
     return interactions.Embed(
         title=title_section[:255],
-        description="listen on:\n" + "\n".join([
-            f"- [{x['platform']}]({x['url']})" for x in relevant_data
-        ]),
+        description="listen on:\n"
+        + "\n".join([f"- [{x['platform']}]({x['url']})" for x in relevant_data]),
         color=0x00FFFF,
         url=data["pageUrl"],
         thumbnail=thumbnail,
@@ -99,6 +101,7 @@ async def on_startup() -> None:
     print("Bot is ready!")
 
 
+@interactions.contexts(guild=True, bot_dm=False, private_channel=True)
 @interactions.slash_command(
     name="music",
     description="Generate a Songwhip link from a link.",
@@ -136,6 +139,7 @@ async def get_song_data_from_message(ctx: interactions.ContextMenuContext) -> No
         embeds.append(embed)
 
     await ctx.respond(content="Found these song(s):", embeds=embeds, ephemeral=False)
+
 
 if __name__ == "__main__":
     # run the bot
