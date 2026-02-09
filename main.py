@@ -126,6 +126,8 @@ async def music(ctx, url: str) -> None:
 
 
 @interactions.message_context_menu(name="Get Songs")
+@interactions.integration_types(guild=True, user=True)
+@interactions.contexts(guild=True, bot_dm=False, private_channel=True)
 async def get_song_data_from_message(ctx: interactions.ContextMenuContext) -> None:
     await ctx.defer(ephemeral=False)
 
