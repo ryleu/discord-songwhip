@@ -124,9 +124,11 @@ async def music(ctx, url: str) -> None:
     await ctx.defer()
 
     embed = get_song_data(url)
-    embed.author = attribution()
-
-    await ctx.respond(embed=embed)
+    if isinstance(embed, interactions.Embed):
+        embed.author = attribution()
+        await ctx.respond(embed=embed)
+    else:
+        await ctx.respond(file=embed)
 
 
 @interactions.message_context_menu(name="Get Songs")
