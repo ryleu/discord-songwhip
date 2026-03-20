@@ -9,6 +9,7 @@ from json import loads
 from requests import get
 from io import StringIO
 from urllib.parse import quote
+from json import dumps
 
 if os.path.exists("config.json"):
     with open("config.json") as file:
@@ -32,7 +33,7 @@ def get_song_data(url: str) -> Union[interactions.Embed, interactions.File]:
     # check and make sure we have a valid response
     code = response.status_code
     if code not in range(200, 300):
-        return interactions.File(file=StringIO(data), file_name=f"{code}.log")
+        return interactions.File(file=StringIO(dumps(data)), file_name=f"{code}.json")
 
     # parse the data we care about
     title = None
