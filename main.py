@@ -144,9 +144,11 @@ async def get_song_data_from_message(ctx: interactions.ContextMenuContext) -> No
 
         # get the song data
         embed = get_song_data(url)
-        embed.author = attribution()
-
-        embeds.append(embed)
+        if isinstance(embed, interactions.Embed):
+            embed.author = attribution()
+            embeds.append(embed)
+        else:
+            return await ctx.respond(file=embed)
 
     await ctx.respond(content="Found these song(s):", embeds=embeds, ephemeral=False)
 
