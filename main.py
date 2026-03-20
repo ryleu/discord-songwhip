@@ -36,9 +36,9 @@ def get_song_data(url: str) -> Union[interactions.Embed, interactions.File]:
         return interactions.File(file=StringIO(dumps(data)), file_name=f"{code}.json")
 
     # parse the data we care about
-    title = None
-    artist = None
-    thumbnail = None
+    title: str | None = None
+    artist: str | None = None
+    thumbnail: str | None = None
 
     relevant_platforms = [
         "spotify",
@@ -72,10 +72,13 @@ def get_song_data(url: str) -> Union[interactions.Embed, interactions.File]:
     # discord caps embed titles at 256 characters
     artist_text = f" by {artist}"
     remaining_length = 256 - len(artist_text)
-    if len(title) > remaining_length:
-        title_section = title[: remaining_length - 2] + "…" + artist_text
+    if title:
+        if len(title) > remaining_length:
+            title_section = title[: remaining_length - 2] + "…" + artist_text
+        else:
+            title_section = title + artist_text
     else:
-        title_section = title + artist_text
+        title_section = "null"
 
     return interactions.Embed(
         title=title_section[:255],
