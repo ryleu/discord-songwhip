@@ -23,7 +23,9 @@ url_regex = re.compile(
 )
 
 
-def get_song_data(url: str) -> Union[interactions.Embed, interactions.File]:
+def get_song_data(url: str, author_id: int) -> Union[interactions.Embed, interactions.File]:
+    print(f"{author_id} requested")
+
     # get the data from the songwhip api
     response = get(
         url=f"https://api.song.link/v1-alpha.1/links?url={quote(url)}&userCountry=US"
@@ -123,7 +125,7 @@ async def on_startup() -> None:
 async def music(ctx, url: str) -> None:
     await ctx.defer()
 
-    embed = get_song_data(url)
+    embed = get_song_data(url, ctx.author.id)
     if isinstance(embed, interactions.Embed):
         embed.author = attribution()
         await ctx.respond(embed=embed)
@@ -143,7 +145,7 @@ async def get_song_data_from_message(ctx: interactions.ContextMenuContext) -> No
         url = match.expand(r"\g<scheme>://\g<domain>\g<directory>")
 
         # get the song data
-        embed = get_song_data(url)
+        embed = get_song_data(url, ctx.author.id)
         if isinstance(embed, interactions.Embed):
             embed.author = attribution()
             embeds.append(embed)
